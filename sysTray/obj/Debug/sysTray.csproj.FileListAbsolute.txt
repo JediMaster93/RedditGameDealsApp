@@ -1,0 +1,11 @@
+c:\users\jakov\documents\visual studio 2013\Projects\sysTray\sysTray\bin\Debug\sysTray.exe.config
+c:\users\jakov\documents\visual studio 2013\Projects\sysTray\sysTray\obj\Debug\sysTray.csprojResolveAssemblyReference.cache
+c:\users\jakov\documents\visual studio 2013\Projects\sysTray\sysTray\obj\Debug\sysTray.Properties.Resources.resources
+c:\users\jakov\documents\visual studio 2013\Projects\sysTray\sysTray\obj\Debug\sysTray.csproj.GenerateResource.Cache
+c:\users\jakov\documents\visual studio 2013\Projects\sysTray\sysTray\bin\Debug\sysTray.exe
+c:\users\jakov\documents\visual studio 2013\Projects\sysTray\sysTray\bin\Debug\sysTray.pdb
+c:\users\jakov\documents\visual studio 2013\Projects\sysTray\sysTray\obj\Debug\sysTray.exe
+c:\users\jakov\documents\visual studio 2013\Projects\sysTray\sysTray\obj\Debug\sysTray.pdb
+C:\Users\Jakov\documents\visual studio 2013\Projects\sysTray\sysTray\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Jakov\documents\visual studio 2013\Projects\sysTray\sysTray\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\Jakov\documents\visual studio 2013\Projects\sysTray\sysTray\bin\Debug\Newtonsoft.Json.xml
