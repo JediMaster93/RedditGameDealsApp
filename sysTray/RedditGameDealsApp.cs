@@ -24,7 +24,7 @@ namespace sysTray
         private String topThreadsURL = "http://www.reddit.com/r/gamedeals/top/.json?limit=100&sort=today";
         private WebClient webClient;
         private List<GameDeal> seenDeals = new List<GameDeal>();
-        private int scoreThreshold = 200; //needs to be able to be defined by the user through the traymenu
+        private int scoreThreshold = 50; //needs to be able to be defined by the user through the traymenu
         public SysTrayApp()
         {
             // Create a simple tray menu with only one item.
@@ -196,14 +196,14 @@ namespace sysTray
                   
                     if(bestDeal == null)
                     {
-                        if(!isDealInSeenList(deal))
+                        if(!isDealInSeenList(deal) && !deal.over_18 )
                         {
                             bestDeal = deal;
                         }
                     }
                     else
                     {
-                        if(deal.score > bestDeal.score && !isDealInSeenList(deal))
+                        if(deal.score > bestDeal.score && !isDealInSeenList(deal) && !deal.over_18)
                         {
                             bestDeal = deal;
                         }
