@@ -24,6 +24,7 @@ namespace sysTray
         private String topThreadsURL = "http://www.reddit.com/r/gamedeals/top/.json?limit=100&sort=today";
         private WebClient webClient;
         private List<GameDeal> seenDeals = new List<GameDeal>();
+        private int scoreThreshold = 200; //needs to be able to be defined by the user through the traymenu
         public SysTrayApp()
         {
             // Create a simple tray menu with only one item.
@@ -43,7 +44,7 @@ namespace sysTray
 
             //button
             b = new Button();
-            b.Text = "update";
+            b.Text = "display best deal"; //temporary testing 
             b.Click += button_click;
             //web client
             webClient = new WebClient();
@@ -71,7 +72,7 @@ namespace sysTray
         }
         private void button_click(Object sender, EventArgs e)
         {
-            notifications_test();
+            displayBestDeal();
           
 
         }
@@ -94,7 +95,7 @@ namespace sysTray
             return deals;
 
         }
-        private void notifications_test()
+        /*private void displayBestDeal()
         {
             //find deals with more than 200 score and display them
             List<GameDeal> deals = parseGameDeals();
@@ -104,7 +105,7 @@ namespace sysTray
 
             foreach (GameDeal deal in deals)
             {
-                if (deal.score >= 0)
+                if (deal.score >= scoreThreshold)
                 {
                     //this gives us ability to display-scrool trough all the possible list-games
                     //using events from timer i can put some items to never show again
@@ -137,7 +138,7 @@ namespace sysTray
                     t.Enabled = true;
                     tlist.Add(t);
                     t.AutoReset = false;
-                    */
+                    
 
                     
                 }
@@ -146,10 +147,10 @@ namespace sysTray
             }
             trayIcon.BalloonTipClicked += (sender, eventargs) =>
             {
+               
                 System.Diagnostics.Process.Start("http://www.reddit.com/" + bestDeal.permalink);
                 seenDeals.Add(bestDeal);
-
-
+                
             };
 
             trayIcon.ShowBalloonTip(5000, "New Deal!", bestDeal.title, ToolTipIcon.Info);
@@ -157,7 +158,59 @@ namespace sysTray
            /* foreach (System.Timers.Timer t in tlist)
             {
                 t.Start();
-            }*/
+            }
+        }*/
+
+        private void displayBestDeal()
+        {
+
+            GameDeal dealToDisplay = findBestDeal();
+            if(dealToDisplay != null)
+            {
+
+                displayDeal(dealToDisplay);
+            }
+        }
+        private void displayDeal(GameDeal deal)
+        {
+            trayIcon.BalloonTipClicked += (sender, eventargs) =>
+            {
+
+                System.Diagnostics.Process.Start("http://www.reddit.com/" + deal.permalink);
+                seenDeals.Add(deal);
+
+            };
+
+            trayIcon.ShowBalloonTip(5000, "New Deal!", deal.title, ToolTipIcon.Info);
+
+
+        }
+        private GameDeal findBestDeal()
+        {
+            List<GameDeal> deals = parseGameDeals();
+            GameDeal bestDeal = null;
+            foreach (GameDeal deal in deals)
+            {
+                if (deal.score >= scoreThreshold)
+                {
+                  
+                    if(bestDeal == null)
+                    {
+                        if(!isDealInSeenList(deal))
+                        {
+                            bestDeal = deal;
+                        }
+                    }
+                    else
+                    {
+                        if(deal.score > bestDeal.score && !isDealInSeenList(deal))
+                        {
+                            bestDeal = deal;
+                        }
+                    }
+                }
+            }
+            return bestDeal;
         }
 
         protected override void Dispose(bool isDisposing)
@@ -173,6 +226,7 @@ namespace sysTray
 
         private void ShowBalloonWindow(int timeout, string title, string text, ToolTipIcon icon)
         {
+            //actually shows a ballon tip for the timeout value(.net method doesnt do that, thanks microsoft)
             if (timeout <= 0)
                 return;
 
@@ -190,6 +244,7 @@ namespace sysTray
 
         private Boolean isDealInSeenList(GameDeal deal)
         {
+            //returns true if deal is in seendeal list
             foreach(GameDeal seenDeal in seenDeals)
             {
                 if(deal.title.Equals(seenDeal.title))
