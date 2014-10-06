@@ -85,7 +85,7 @@ namespace sysTray
         }
         public void displayDeal(GameDeal deal)
         {
-
+            //removes previous events from trayicon, attaches new event, displays deal.
             ballonClickedUnsubscribeAllEvents();
             addDealToBallonEvents(deal);
 
@@ -95,6 +95,8 @@ namespace sysTray
         }
         public void addDealToBallonEvents(GameDeal deal)
         {
+            //add a deal to event list, event list is here so we can unsubscribe all events later.
+            // probably shouldnt be a list...
             EventHandler handlerReference = (sender, eventargs) =>
             {
                 System.Diagnostics.Process.Start("http://www.reddit.com" + deal.permalink);
@@ -105,6 +107,8 @@ namespace sysTray
         }
         public void ballonClickedUnsubscribeAllEvents()
         {
+            //remove all events from trayicon, if we dont do this 
+            //when user clicks on ballon all prevous deals will be shown(because of previously attached events)
             foreach (EventHandler e in ballonClickEventList)
             {
                 trayIcon.BalloonTipClicked -= e;
@@ -113,6 +117,7 @@ namespace sysTray
 
         public GameDeal findBestDeal()
         {
+            //looks through current top deals, returns the best one that user has not already seen.
             List<GameDeal> deals = parseGameDeals();
             GameDeal bestDeal = null;
             foreach (GameDeal deal in deals)
@@ -122,6 +127,7 @@ namespace sysTray
 
                     if (bestDeal == null)
                     {
+                        //best deal is not initalised, whatever this deal is, make it a best deal.
                         if (!isDealInSeenList(deal) && !deal.over_18)
                         {
                             bestDeal = deal;
@@ -129,6 +135,8 @@ namespace sysTray
                     }
                     else
                     {
+                        //compare current deal in loop with best deal
+                        //deal.over18 is a expired deal in  /r/gamedeals.
                         if (deal.score > bestDeal.score && !isDealInSeenList(deal) && !deal.over_18)
                         {
                             bestDeal = deal;

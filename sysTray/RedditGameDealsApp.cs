@@ -27,20 +27,9 @@ namespace sysTray
         private NotifyIcon trayIcon;
         private ContextMenu trayMenu;
         private Button b;
-        private String topThreadsURL;
-        private WebClient webClient;
-        private List<GameDeal> seenDeals;
-        private int scoreThreshold; //needs to be able to be defined by the user through the traymenu
         private System.Timers.Timer updateTimer;
         private int updateTimerInterval;
         private delegate void ballonClickDelegate(Object sender, EventArgs e);
-        List<EventHandler> ballonClickEventList;
-        private GameDeal GLOBAL_DEAL;
-
-        /*
-         * 
-         *
-         * */
         private DealController dealController;
         public SysTrayApp()
         {
