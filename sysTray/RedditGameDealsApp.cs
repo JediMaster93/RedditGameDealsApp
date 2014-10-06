@@ -10,6 +10,12 @@ using System.Threading;
 
 namespace sysTray
 {
+    /*
+     *This class handles gui elements and "main loops",
+     *most of the logic is behind DealController.
+     * 
+     * 
+     */
     public class SysTrayApp : Form
     {
         [STAThread]
@@ -30,12 +36,18 @@ namespace sysTray
         private delegate void ballonClickDelegate(Object sender, EventArgs e);
         List<EventHandler> ballonClickEventList;
         private GameDeal GLOBAL_DEAL;
+
+        /*
+         * 
+         *
+         * */
+        private DealController dealController;
         public SysTrayApp()
         {
             initialiseObjects();
-            
 
-            
+
+
         }
         private void initialiseObjects()
         {
@@ -56,17 +68,17 @@ namespace sysTray
             b.Text = "display best deal"; //temporary testing 
             b.Click += button_click;
 
-            seenDeals = new List<GameDeal>();
-            topThreadsURL = "http://www.reddit.com/r/gamedeals/top/.json?limit=100&sort=today";
-            scoreThreshold = 50;
-            updateTimerInterval = 5 * 1000;
-            webClient = new WebClient();
-            ballonClickEventList = new List<EventHandler>();
+            //pass in trayIcon that dealcontroller uses to display ballons
+            dealController = new DealController(trayIcon);
 
+            updateTimerInterval = 5 * 1000;
             updateTimer = new System.Timers.Timer(updateTimerInterval);
-            updateTimer.Elapsed += displayBestDeal;
+            updateTimer.Elapsed += dealController.displayBestDeal;
+
             updateTimer.AutoReset = true;
             updateTimer.Start();
+
+            
 
 
         }
@@ -87,95 +99,15 @@ namespace sysTray
         }
         private void button_click(Object sender, EventArgs e)
         {
-            displayBestDeal(sender, e);
-          
-
-        }
-        private List<GameDeal> parseGameDeals()
-        {
-            // parses what api gives and returns a gamedeals array
-            String data = webClient.DownloadString(topThreadsURL);
-            JObject ob = JObject.Parse(data);
-
-            JObject ss = (JObject)ob["data"];
-            JArray arr = (JArray)ss["children"];
-
-            GameDeal deal = JsonConvert.DeserializeObject<GameDeal>(arr[0]["data"].ToString());
-            List<GameDeal> deals = new List<GameDeal>();
-
-            foreach (JObject obj in arr)
-            {
-                deals.Add(JsonConvert.DeserializeObject<GameDeal>(obj["data"].ToString()));
-            }
-            return deals;
-
-        }
-      
-        private void displayBestDeal(Object sender, EventArgs e)
-        {
-
-            GameDeal dealToDisplay = findBestDeal();
-            if(dealToDisplay != null)
-            {
-
-                displayDeal(dealToDisplay);
-            }
-        }
-        private void displayDeal(GameDeal deal)
-        {
-
-            ballonClickedUnsubscribeAllEvents();
-            addDealToBallonEvents(deal);
- 
-            trayIcon.ShowBalloonTip(5000, "New Deal!", deal.title, ToolTipIcon.Info);
+            //displayBestDeal(sender, e);
 
 
         }
-        private void addDealToBallonEvents(GameDeal deal)
-        {
-            EventHandler handlerReference = (sender, eventargs) =>
-            {
-                System.Diagnostics.Process.Start("http://www.reddit.com/" + deal.permalink);
-                seenDeals.Add(deal);
-            };
-            ballonClickEventList.Add(handlerReference);
-            trayIcon.BalloonTipClicked += handlerReference;
-        }
-        private void ballonClickedUnsubscribeAllEvents()
-        {
-            foreach (EventHandler e in ballonClickEventList)
-            {
-                trayIcon.BalloonTipClicked -= e;
-            }
-        }
-       
-        private GameDeal findBestDeal()
-        {
-            List<GameDeal> deals = parseGameDeals();
-            GameDeal bestDeal = null;
-            foreach (GameDeal deal in deals)
-            {
-                if (deal.score >= scoreThreshold)
-                {
-                  
-                    if(bestDeal == null)
-                    {
-                        if(!isDealInSeenList(deal) && !deal.over_18 )
-                        {
-                            bestDeal = deal;
-                        }
-                    }
-                    else
-                    {
-                        if(deal.score > bestDeal.score && !isDealInSeenList(deal) && !deal.over_18)
-                        {
-                            bestDeal = deal;
-                        }
-                    }
-                }
-            }
-            return bestDeal;
-        }
+
+
+
+
+
 
         protected override void Dispose(bool isDisposing)
         {
@@ -184,49 +116,15 @@ namespace sysTray
                 // Release the icon resource.
                 trayIcon.Dispose();
             }
-            
+
             base.Dispose(isDisposing);
         }
 
-        private void ShowBalloonWindow(int timeout, string title, string text, ToolTipIcon icon)
-        {
-            //actually shows a ballon tip for the timeout value(.net method doesnt do that, thanks microsoft)
-            if (timeout <= 0)
-                return;
-
-            int timeoutCount = 0;
-            trayIcon.ShowBalloonTip(timeout, title, text, icon);
-
-            while (timeoutCount < timeout)
-            {
-                Thread.Sleep(1);
-                timeoutCount++;
-            }
-            
-            trayIcon.Dispose();
-        }
-
-        private Boolean isDealInSeenList(GameDeal deal)
-        {
-            //returns true if deal is in seendeal list
-            foreach(GameDeal seenDeal in seenDeals)
-            {
-                if(deal.title.Equals(seenDeal.title))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-
     }
 }
-
+ /*METHODS THAT MIGHT BE USEFUL LATER*/
 /*private void displayBestDeal()
       {
- * THIS MIGHT BE USEFUL LATER
           //find deals with more than 200 score and display them
           List<GameDeal> deals = parseGameDeals();
           int i = 2000;
@@ -289,4 +187,22 @@ namespace sysTray
           {
               t.Start();
           }
+      }*/
+
+/*  private void ShowBalloonWindow(int timeout, string title, string text, ToolTipIcon icon)
+      {
+          //actually shows a ballon tip for the timeout value(.net method doesnt do that, thanks microsoft)
+          if (timeout <= 0)
+              return;
+
+          int timeoutCount = 0;
+          trayIcon.ShowBalloonTip(timeout, title, text, icon);
+
+          while (timeoutCount < timeout)
+          {
+              Thread.Sleep(1);
+              timeoutCount++;
+          }
+            
+          trayIcon.Dispose();
       }*/
