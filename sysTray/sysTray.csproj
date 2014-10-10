@@ -49,6 +49,9 @@
   <ItemGroup>
     <Compile Include="DealController.cs" />
     <Compile Include="GameDeal.cs" />
+    <Compile Include="Observable.cs" />
+    <Compile Include="Observer.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="RedditGameDealsApp.cs">
       <SubType>Form</SubType>
     </Compile>

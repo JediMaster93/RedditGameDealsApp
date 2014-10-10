@@ -67,7 +67,15 @@ namespace sysTray
             updateTimer.AutoReset = true;
             updateTimer.Start();
 
-            
+            TableLayoutPanel p = new TableLayoutPanel();
+            p.Name = "TableLayoutPanel";
+            p.RowCount = 10;
+            p.ColumnCount = 2;
+            this.Controls.Add(p);
+            Options o = new Options(this,p);
+            o.addOptionsToWindow();
+
+            o.subscribeObserver(dealController);
 
 
         }
@@ -111,87 +119,4 @@ namespace sysTray
 
     }
 }
- /*METHODS THAT MIGHT BE USEFUL LATER*/
-/*private void displayBestDeal()
-      {
-          //find deals with more than 200 score and display them
-          List<GameDeal> deals = parseGameDeals();
-          int i = 2000;
-          List<System.Timers.Timer> tlist = new List<System.Timers.Timer>();
-          GameDeal bestDeal = new GameDeal();
-
-          foreach (GameDeal deal in deals)
-          {
-              if (deal.score >= scoreThreshold)
-              {
-                  //this gives us ability to display-scrool trough all the possible list-games
-                  //using events from timer i can put some items to never show again
-                  //on click ->open item in browser
-                  //MAybe, it would be actually really usefull to put the gamedeal into timer??
-                  //
-                  //SHOW HIGHEST DEAL FOR NOW (multiple deals dont work properly because of baloon behaviour)
-                  if(deal.score > bestDeal.score && !isDealInSeenList(deal))
-                  {
-                      bestDeal = deal;
-                  }
-                 /* System.Timers.Timer t = new System.Timers.Timer();
-                  t.Elapsed += (sender, eventargs) =>
-                      {
-                        //  b.Text = deal.title;
-                          //once ballon behaviour is fixed i can work on multiple deals.
-                          //right now, find biggest deal, display it.
-                          trayIcon.ShowBalloonTip(1, "new_deal", deal.title, ToolTipIcon.Info);
-                          trayIcon.BalloonTipClicked += (sender2, eventargs2) =>
-                              {
-                                  b.Text = deal.title;
-                                  deal.seen = true;
-                                  System.Diagnostics.Process.Start("http://www.reddit.com/" + deal.permalink);
-
-                              };
-
-                      };
-                  t.Interval = i;
-                  i += 2000;
-                  t.Enabled = true;
-                  tlist.Add(t);
-                  t.AutoReset = false;
-                    
-
-                    
-              }
-
-
-          }
-          trayIcon.BalloonTipClicked += (sender, eventargs) =>
-          {
-               
-              System.Diagnostics.Process.Start("http://www.reddit.com/" + bestDeal.permalink);
-              seenDeals.Add(bestDeal);
-                
-          };
-
-          trayIcon.ShowBalloonTip(5000, "New Deal!", bestDeal.title, ToolTipIcon.Info);
-         
-         /* foreach (System.Timers.Timer t in tlist)
-          {
-              t.Start();
-          }
-      }*/
-
-/*  private void ShowBalloonWindow(int timeout, string title, string text, ToolTipIcon icon)
-      {
-          //actually shows a ballon tip for the timeout value(.net method doesnt do that, thanks microsoft)
-          if (timeout <= 0)
-              return;
-
-          int timeoutCount = 0;
-          trayIcon.ShowBalloonTip(timeout, title, text, icon);
-
-          while (timeoutCount < timeout)
-          {
-              Thread.Sleep(1);
-              timeoutCount++;
-          }
-            
-          trayIcon.Dispose();
-      }*/
+ 

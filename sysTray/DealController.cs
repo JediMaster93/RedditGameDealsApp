@@ -17,7 +17,7 @@ namespace sysTray
      * 
      * 
      **/
-    class DealController
+    class DealController : Observer
     {
 
         private WebClient webClient;
@@ -145,6 +145,31 @@ namespace sysTray
                 }
             }
             return bestDeal;
+        }
+
+        public void update(Observable obs, Object arg)
+        {
+            if(arg is Dictionary<String, Object>)
+            {
+                //cast arg to dict
+                Dictionary<String, Object> dict  = (Dictionary<String, Object>)arg;
+                if (dict["url"] != null && dict["url"].GetType() == typeof(String))
+                {
+                    changeUrlAndFlushData((String)dict["url"]);
+                }
+                
+
+            }
+
+        }
+        public void changeUrlAndFlushData(String url)
+        {
+            //we cant simply change url because of how ballons and algorithms for finding deals work.
+            //this method takes care of that so we instatly change to new url as if we restarted the program.
+            topThreadsURL = url;
+            seenDeals = new List<GameDeal>();
+            ballonClickedUnsubscribeAllEvents();
+
         }
 
     }
